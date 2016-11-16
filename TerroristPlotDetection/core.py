@@ -1,7 +1,91 @@
 #!/usr/bin/env python
-import inputs.py
+
 " Core functions "
 
-def plan(Graph):
-    pass
+def doTPD(Graph):
+    S_dash, A_dash = lwaLP()
 
+    while True:
+        X, Y = coreLP(S_dash, A_dash)
+
+        S_plus = betterOD(X, Y)
+        S_dash.update(S_plus)
+
+        A_plus = betterOA(x, y)
+        A_dash.update(A_plus)
+
+        if not S_plus and not A_plus:
+            X, Y = coreLP(S_dash, A_dash)
+            break
+
+    return X, Y
+
+def powerset(iterable):
+    s = list(iterable)
+    return chain.from_iterable(combinations(s, r) for r in xrange(1, len(s)+1))
+
+def utility(X, S_power, A, P):
+    " Payoff sahi karna hai "
+    def is_overlapping(S, A):
+        """
+        check if defender and attacker strategies
+        have overlapping vertices
+        """
+        return len(S.intersection(A)) != 0
+
+    tmp = [(1 - is_overlapping(S, A)) * x for S, x in zip(S_power, X)]
+    tmp = sum(tmp)
+    return P[A] * tmp
+
+def coreLP(S_power, A_power):
+    """
+    Input: S_power - Defender strategy space as list
+           A_power - Attacker strategy space as list
+    """
+
+    import numpy as np
+    from pycpx import CPlexModel
+
+    # Compute X assuming attacker pure strategy
+    m = CPlexModel()
+
+    U = m.new()
+    X = m.new(len(S_power))
+
+    for A in A_power:
+        m.constrain(U <= -utility(X, S_power, A))
+
+    m.constrain(sum(X) == 1)
+
+    for x in X:
+        m.constrain(x >= 0)
+
+    m.maximize(U)
+    X = m[X]
+
+    # Compute Y assuming defender pure strategy
+    m = CPlexModel()
+
+    U = m.new()
+    Y = m.new(len(A_power))
+
+    for S in S_power:
+        m.constrain(U <= utility(Y, A_power, S))
+
+    m.constrain(sum(Y) == 1)
+
+    for y in Y:
+        m.constrain(y >= 0)
+
+    m.maximize(U)
+    Y = m[Y]
+
+    return X, Y
+
+def main():
+    S_power = [set([1, 2, 3, 4, 5, 6, 7]), set([3]), set([4])]
+    A_power = [set([2]), set([7])]
+    return core_lp(S_power, A_power)
+
+if __name__ == "__main__":
+    main()
