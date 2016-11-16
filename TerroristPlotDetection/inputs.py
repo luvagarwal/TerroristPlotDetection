@@ -2,12 +2,13 @@
 
 " Contains various input trees "
 import networkx as nt
+import matplotlib.pyplot as plt
 
 class BarabasiAlbert():
     def __init__(self, n, m, seed):
-		self.n = n
-		self.m = m
-		self.seed = seed
+        self.n = n
+        self.m = m
+        self.seed = seed
         self.G = nt.barabasi_albert_graph(self.n, self.m, self.seed)
     
     def draw_plot(self):
