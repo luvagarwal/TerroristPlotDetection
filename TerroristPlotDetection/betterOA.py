@@ -2,7 +2,7 @@ import numpy as numpy
 import networkx as nx
 
 #Returns a list of cut vertices of subgraph A of G
-def P(A):
+def P(A,E,V,G):
 	G_A=G.subgraph(A)
 	cutsets = list(nx.all_node_cuts(G_A))
 	cutvertices=[]
@@ -12,7 +12,7 @@ def P(A):
 	return cutvertices
 
 #Return a random connected subgraph of G within hamming distance k of A
-def F(v,k,A):
+def F(v,k,A,E,V,G):
 	C=list(nx.connected_component_subgraphs(G))
 	np.random.shuffle(C)
 	while True:
@@ -30,7 +30,7 @@ def F(v,k,A):
 		if hammingDistance<=k:
 			return A_dash
 
-def local_search(v,A,x):
+def local_search(v,A,x,E,V,G):
 	while True:
 		for u in A:
 			for w in S:
@@ -49,12 +49,12 @@ def local_search(v,A,x):
 			A=A.union(v_star)
 		else:
 			for u in A:
-				if u not in P(A) and u is not v:
+				if u not in P(A,E,V,G) and u is not v:
 					v_star=u
 					break
 			U_a_max=U_a(x,A-set([v_star]))
 			for u in A:
-				if u not in P(A) and u is not v:
+				if u not in P(A,E,V,G) and u is not v:
 					if U_a_max < U_a(x,A-set([u])):
 						U_a_max=U_a(x,A-set([u]))
 						v_star=u
@@ -63,17 +63,17 @@ def local_search(v,A,x):
 			else:
 				return A
 
-def better_oa(x,y):
+def better_oa(x,y,E,V,G):
 	A_better=set([])
 	for v in V:
-		A=local_search(v,set([v]),x)
+		A=local_search(v,set([v]),x,E,V,G)
 		k=1
 		c=0
 		t=0
 		while True:
 			t+=1
-			A_dash=F(v,k,A)
-			A_dash=local_search(v,A_dash,x)
+			A_dash=F(v,k,A,E,V,G)
+			A_dash=local_search(v,A_dash,x,E,V,G)
 			if U_a(x,A_dash)>U_a(x,A):
 				A=A_dash
 				k=1
