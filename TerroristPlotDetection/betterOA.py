@@ -15,14 +15,16 @@ def P(A,E,V,G):
 def F(v,k,A,E,V,G):
 	C=list(nx.connected_component_subgraphs(G))
 	np.random.shuffle(C)
+	l=len(C)
+	r=np.random.randint(1,l-1)
 	while True:
 		A_dash=set([v])
-		for i in V:
-			if np.random.random()>0.5:
-				A_dash=A_dash.union([i])
-		G_A=G.subgraph(A_dash)
-		if not nx.is_connected(G_A):
-			continue
+		for i in range(r):
+			vert=[]
+			for (u,v) in E:
+				if u in A_dash and v not in A_dash:
+					vert.append(v)
+			A_dash.add(np.random.choice(vert))
 		hammingDistance=0
 		for u in V:
 			if u in A and u in A_dash:
