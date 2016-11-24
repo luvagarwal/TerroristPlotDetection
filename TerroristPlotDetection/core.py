@@ -26,22 +26,20 @@ def powerset(iterable):
 
 def get_neighbours(A, Graph):
     edges = Graph.G.edges()
-    neighbours = dict()
-    for v in A:
-        neighbours[v] = list()
-    print edges
+    neighbours = []
     for i in edges:
         if i[0] in A and i[1] in A:
             for v in A:
                 if i[0] == v and i[1] != v:
-                    neighbours[v].append(i[1])
+                    neighbours.append(i[1])
                 elif i[1] == v and i[0] != v:
-                    neighbours[v].append(i[0])
-    return neighbours
+                    neighbours.append(i[0])
+    return list(set(neighbours))
 
 def utility(X, S_power, A, P, G):
     def payoff(A):
         out = sum([P[v] for v in A])
+        neighbours = get_neighbours(A, G)
         out += delta * sum([P[v] for v in neighbours])
         return out
 
@@ -50,7 +48,7 @@ def utility(X, S_power, A, P, G):
         check if defender and attacker strategies
         have overlapping vertices
         """
-        return len(S.intersection(A)) != 0
+        return int(len(S.intersection(A)) != 0)
 
     tmp = [(1 - is_overlapping(S, A)) * x for S, x in zip(S_power, X)]
     tmp = sum(tmp)

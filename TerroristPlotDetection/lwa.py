@@ -29,6 +29,7 @@ def findStrategySet(cv, R):
         y = y + i
         while start < len(prefix) and prefix[start] <= y:
             start += 1
+        start = min(len(prefix) - 1, start)
         ans.append(start)
     print ans
     return ans
