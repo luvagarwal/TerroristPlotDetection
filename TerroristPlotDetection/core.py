@@ -3,7 +3,7 @@
 " Core functions "
 
 def doTPD(Graph):
-    S_dash, A_dash = lwaLP()
+    S_dash, A_dash = lwaLP(Graph)
 
     while True:
         X, Y = coreLP(S_dash, A_dash)

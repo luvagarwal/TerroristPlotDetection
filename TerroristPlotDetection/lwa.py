@@ -4,8 +4,8 @@ from inputs import BarabasiAlbert
 from pycpx import CPlexModel
 import numpy as np
 
-def LwaLp(graph_object):
-	capabilites = graph_object.GetIndividualCapabilities()
+def lwaLp(graph_object):
+	capabilites = graph_object.capabilities
 	no_vertices = graph_object.n
 	m = CPlexModel()
 	cv = m.new(no_vertices, vtype = float, ub = 1, lb =0)

@@ -14,6 +14,7 @@ class BarabasiAlbert():
         self.R = n/5
         self.net_extern_measure = 0.1
         self.capabilites = self.get_individual_capabilities()
+        self.edges = self.G.
 
     def draw_plot(self):
         nt.draw(self.G)
