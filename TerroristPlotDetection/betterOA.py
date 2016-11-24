@@ -34,13 +34,7 @@ def F(v,k,A,E,V,G):
 
 def local_search(v,A,x,E,V,G):
 	while True:
-		for u in A:
-			for w in S:
-				if w not in A and (u,w) in E:
-					v_star=w
-					break
-			break
-		U_a_max=U_a(x,A.union([v_star]))
+		U_a_max=-np.inf
 		for u in A:
 			for w in S:
 				if w not in A and (u,w) in E:
@@ -50,11 +44,7 @@ def local_search(v,A,x,E,V,G):
 		if U_a(x,A.union([v_star]))>U_a(x,A):
 			A=A.union(v_star)
 		else:
-			for u in A:
-				if u not in P(A,E,V,G) and u is not v:
-					v_star=u
-					break
-			U_a_max=U_a(x,A-set([v_star]))
+			U_a_max=-np.inf
 			for u in A:
 				if u not in P(A,E,V,G) and u is not v:
 					if U_a_max < U_a(x,A-set([u])):
