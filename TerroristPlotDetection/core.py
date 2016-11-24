@@ -2,11 +2,19 @@
 
 " Core functions "
 
+import numpy as np
+from pycpx import CPlexModel
+
+from betterOA import betterOA
+from betterOD import betterOD
+from lwa import lwaLP
+from inputs import *
+
 def doTPD(Graph):
     S_dash, A_dash = lwaLP(Graph)
 
     while True:
-        X, Y = coreLP(S_dash, A_dash)
+        X, Y = coreLP(S_dash, A_dash, Graph)
 
         S_plus = betterOD(X, Y)
         S_dash.update(S_plus)
@@ -15,7 +23,7 @@ def doTPD(Graph):
         A_dash.update(A_plus)
 
         if not S_plus and not A_plus:
-            X, Y = coreLP(S_dash, A_dash)
+            X, Y = coreLP(S_dash, A_dash, Graph)
             break
 
     return X, Y
@@ -38,9 +46,9 @@ def get_neighbours(A, Graph):
 
 def utility(X, S_power, A, P, G):
     def payoff(A):
-        out = sum([P[v] for v in A])
+        out = sum([P(v) for v in A])
         neighbours = get_neighbours(A, G)
-        out += delta * sum([P[v] for v in neighbours])
+        out += G.delta * sum([P[v] for v in neighbours])
         return out
 
     def is_overlapping(S, A):
@@ -54,14 +62,11 @@ def utility(X, S_power, A, P, G):
     tmp = sum(tmp)
     return payoff(A) * tmp
 
-def coreLP(S_power, A_power):
+def coreLP(S_power, A_power, Graph):
     """
     Input: S_power - Defender strategy space as list
            A_power - Attacker strategy space as list
     """
-
-    import numpy as np
-    from pycpx import CPlexModel
 
     # Compute X assuming attacker pure strategy
     m = CPlexModel()
@@ -70,7 +75,7 @@ def coreLP(S_power, A_power):
     X = m.new(len(S_power))
 
     for A in A_power:
-        m.constrain(U <= -utility(X, S_power, A))
+        m.constrain(U <= -utility(X, S_power, A, lambda x: 1, Graph))
 
     m.constrain(sum(X) == 1)
 
@@ -87,7 +92,7 @@ def coreLP(S_power, A_power):
     Y = m.new(len(A_power))
 
     for S in S_power:
-        m.constrain(U <= utility(Y, A_power, S))
+        m.constrain(U <= utility(Y, A_power, S, P, Graph))
 
     m.constrain(sum(Y) == 1)
 
@@ -102,7 +107,9 @@ def coreLP(S_power, A_power):
 def main():
     S_power = [set([1, 2, 3, 4, 5, 6, 7]), set([3]), set([4])]
     A_power = [set([2]), set([7])]
-    return core_lp(S_power, A_power)
+    inp = BarabasiAlbert()
+    return doTPD(inp)
+    # return coreLP(S_power, A_power, Graph)
 
 if __name__ == "__main__":
     main()

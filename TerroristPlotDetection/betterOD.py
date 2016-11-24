@@ -1,15 +1,15 @@
 import numpy as np
 
-def  better_od(x, y, V, R):
+def  betterOD(x, y, V, R):
     S_better = set()
     for v in V:
         #Starting from v, form S by adding all those vertices which increases the utility in a greedy approach
         U_d_max=-np.inf
         S = set([v])
         while len(S) < R:
-        	U_d_max = -10**9
+            U_d_max = -10**9
             for v_i in V:
-            	tmp = U_d(S.union([v_i]), y)
+                tmp = U_d(S.union([v_i]), y)
                 if tmp > U_d_max:
                     v_star = v_i
                     U_d_max = tmp
