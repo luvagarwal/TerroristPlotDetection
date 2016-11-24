@@ -24,8 +24,12 @@ def powerset(iterable):
     s = list(iterable)
     return chain.from_iterable(combinations(s, r) for r in xrange(1, len(s)+1))
 
-def utility(X, S_power, A, P):
-    " Payoff sahi karna hai "
+def utility(X, S_power, A, P, G):
+    def payoff(A):
+        out = sum([P[v] for v in A])
+        out += delta * sum([P[v] for v in neighbours])
+        return out
+
     def is_overlapping(S, A):
         """
         check if defender and attacker strategies
@@ -35,7 +39,7 @@ def utility(X, S_power, A, P):
 
     tmp = [(1 - is_overlapping(S, A)) * x for S, x in zip(S_power, X)]
     tmp = sum(tmp)
-    return P[A] * tmp
+    return payoff(A) * tmp
 
 def coreLP(S_power, A_power):
     """
