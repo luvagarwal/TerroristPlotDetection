@@ -4,6 +4,7 @@ def  better_od(x, y, V, R):
     S_better = set()
     for v in V:
         #Starting from v, form S by adding all those vertices which increases the utility in a greedy approach
+        U_d_max=-np.inf
         S = set([v])
         while len(S) < R:
         	U_d_max = -10**9
