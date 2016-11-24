@@ -14,7 +14,7 @@ def lwaLp(graph_object):
 	m.constrain(U <= -diag*(1-cv))
 	m.constrain(sum(cv) <= graph_object.R)
 	m.maximize(U)
-	start = findStrategySet(cv, graph_object.R)
+	start = findStrategySet(m[cv], graph_object.R)
 	return start
 
 def findStrategySet(cv, R):

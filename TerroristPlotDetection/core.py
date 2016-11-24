@@ -24,6 +24,21 @@ def powerset(iterable):
     s = list(iterable)
     return chain.from_iterable(combinations(s, r) for r in xrange(1, len(s)+1))
 
+def get_neighbours(A, Graph):
+    edges = Graph.G.edges()
+    neighbours = dict()
+    for v in A:
+        neighbours[v] = list()
+    print edges
+    for i in edges:
+        if i[0] in A and i[1] in A:
+            for v in A:
+                if i[0] == v and i[1] != v:
+                    neighbours[v].append(i[1])
+                elif i[1] == v and i[0] != v:
+                    neighbours[v].append(i[0])
+    return neighbours
+
 def utility(X, S_power, A, P, G):
     def payoff(A):
         out = sum([P[v] for v in A])
