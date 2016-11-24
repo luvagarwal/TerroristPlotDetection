@@ -7,6 +7,7 @@ import numpy as np
 def lwaLP(graph_object):
     capabilites = graph_object.capabilities
     no_vertices = graph_object.n
+    attacker_strategy = list()
     m = CPlexModel()
     cv = m.new(no_vertices, vtype = float, ub = 1, lb =0)
     U = m.new(vtype = float)
@@ -14,8 +15,11 @@ def lwaLP(graph_object):
     m.constrain(U <= -diag*(1-cv))
     m.constrain(sum(cv) <= graph_object.R)
     m.maximize(U)
+    for i in xrange(m[cv]):
+    	if m[cv][i] > 0:
+    		attacker_strategy.append(i)
     start = findStrategySet(m[cv], graph_object.R)
-    return start
+    return start,attacker_strategy
 
 def findStrategySet(cv, R):
     prefix = [cv[0]]
