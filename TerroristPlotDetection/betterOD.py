@@ -6,7 +6,7 @@ def  better_od(x, y, V, R):
         #Starting from v, form S by adding all those vertices which increases the utility in a greedy approach
         S = set([v])
         while len(S) < R:
-        	U_d_max = 0
+        	U_d_max = -10**9
             for v_i in V:
             	tmp = U_d(S.union([v_i]), y)
                 if tmp > U_d_max:
